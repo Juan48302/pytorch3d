@@ -163,6 +163,8 @@ def _read_chunks(
     if binary_data is not None:
         binary_data = np.frombuffer(binary_data, dtype=np.uint8)
 
+    assert binary_data is not None
+
     return json_data, binary_data
 
 

@@ -6,6 +6,8 @@
 
 # pyre-unsafe
 
+import torch
+
 from .blending import (
     BlendParams,
     hard_rgb_blend,

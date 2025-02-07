@@ -203,7 +203,9 @@ class CamerasBase(TensorProperties):
         """
         R: torch.Tensor = kwargs.get("R", self.R)
         T: torch.Tensor = kwargs.get("T", self.T)
+        # pyre-fixme[16]: `CamerasBase` has no attribute `R`.
         self.R = R
+        # pyre-fixme[16]: `CamerasBase` has no attribute `T`.
         self.T = T
         world_to_view_transform = get_world_to_view_transform(R=R, T=T)
         return world_to_view_transform
@@ -228,7 +230,9 @@ class CamerasBase(TensorProperties):
             a Transform3d object which represents a batch of transforms
             of shape (N, 3, 3)
         """
+        # pyre-fixme[16]: `CamerasBase` has no attribute `R`.
         self.R: torch.Tensor = kwargs.get("R", self.R)
+        # pyre-fixme[16]: `CamerasBase` has no attribute `T`.
         self.T: torch.Tensor = kwargs.get("T", self.T)
         world_to_view_transform = self.get_world_to_view_transform(R=self.R, T=self.T)
         view_to_proj_transform = self.get_projection_transform(**kwargs)
@@ -1172,7 +1176,12 @@ class PerspectiveCameras(CamerasBase):
 
         unprojection_transform = to_camera_transform.inverse()
         xy_inv_depth = torch.cat(
-            (xy_depth[..., :2], 1.0 / xy_depth[..., 2:3]), dim=-1  # type: ignore
+            # pyre-fixme[6]: For 1st argument expected `Union[List[Tensor],
+            #  tuple[Tensor, ...]]` but got `Tuple[Tensor, float]`.
+            # pyre-fixme[58]: `/` is not supported for operand types `float` and
+            #  `Tensor`.
+            (xy_depth[..., :2], 1.0 / xy_depth[..., 2:3]),
+            dim=-1,  # type: ignore
         )
         return unprojection_transform.transform_points(xy_inv_depth)
 
@@ -1782,8 +1791,6 @@ def get_ndc_to_screen_transform(
     K = torch.zeros((cameras._N, 4, 4), device=cameras.device, dtype=torch.float32)
     if not torch.is_tensor(image_size):
         image_size = torch.tensor(image_size, device=cameras.device)
-    # pyre-fixme[16]: Item `List` of `Union[List[typing.Any], Tensor, Tuple[Any,
-    #  ...]]` has no attribute `view`.
     image_size = image_size.view(-1, 2)  # of shape (1 or B)x2
     height, width = image_size.unbind(1)
 

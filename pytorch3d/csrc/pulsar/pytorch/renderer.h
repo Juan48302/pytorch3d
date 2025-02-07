@@ -44,21 +44,21 @@ struct Renderer {
       const float& gamma,
       const float& max_depth,
       float min_depth,
-      const c10::optional<torch::Tensor>& bg_col,
-      const c10::optional<torch::Tensor>& opacity,
+      const std::optional<torch::Tensor>& bg_col,
+      const std::optional<torch::Tensor>& opacity,
       const float& percent_allowed_difference,
       const uint& max_n_hits,
       const uint& mode);
 
   std::tuple<
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>>
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>>
   backward(
       const torch::Tensor& grad_im,
       const torch::Tensor& image,
@@ -75,8 +75,8 @@ struct Renderer {
       const float& gamma,
       const float& max_depth,
       float min_depth,
-      const c10::optional<torch::Tensor>& bg_col,
-      const c10::optional<torch::Tensor>& opacity,
+      const std::optional<torch::Tensor>& bg_col,
+      const std::optional<torch::Tensor>& opacity,
       const float& percent_allowed_difference,
       const uint& max_n_hits,
       const uint& mode,
@@ -85,7 +85,7 @@ struct Renderer {
       const bool& dif_rad,
       const bool& dif_cam,
       const bool& dif_opy,
-      const at::optional<std::pair<uint, uint>>& dbg_pos);
+      const std::optional<std::pair<uint, uint>>& dbg_pos);
 
   // Infrastructure.
   /**
@@ -115,8 +115,8 @@ struct Renderer {
       const float& gamma,
       const float& max_depth,
       float& min_depth,
-      const c10::optional<torch::Tensor>& bg_col,
-      const c10::optional<torch::Tensor>& opacity,
+      const std::optional<torch::Tensor>& bg_col,
+      const std::optional<torch::Tensor>& opacity,
       const float& percent_allowed_difference,
       const uint& max_n_hits,
       const uint& mode);

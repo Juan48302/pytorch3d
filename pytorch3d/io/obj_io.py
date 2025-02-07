@@ -8,6 +8,7 @@
 
 
 """This module implements utility functions for loading and saving meshes."""
+
 import os
 import warnings
 from collections import namedtuple
@@ -649,8 +650,7 @@ def _load_obj(
         # Create an array of strings of material names for each face.
         # If faces_materials_idx == -1 then that face doesn't have a material.
         idx = faces_materials_idx.cpu().numpy()
-        face_material_names = np.array(material_names)[idx]  # (F,)
-        face_material_names[idx == -1] = ""
+        face_material_names = np.array([""] + material_names)[idx + 1]  # (F,)
 
         # Construct the atlas.
         texture_atlas = make_mesh_texture_atlas(
@@ -756,10 +756,13 @@ def save_obj(
     output_path = Path(f)
 
     # Save the .obj file
+    # pyre-fixme[9]: f has type `Union[Path, str]`; used as `IO[typing.Any]`.
     with _open_file(f, path_manager, "w") as f:
         if save_texture:
             # Add the header required for the texture info to be loaded correctly
             obj_header = "\nmtllib {0}.mtl\nusemtl mesh\n\n".format(output_path.stem)
+            # pyre-fixme[16]: Item `Path` of `Union[Path, str]` has no attribute
+            #  `write`.
             f.write(obj_header)
         _save(
             f,
@@ -811,7 +814,6 @@ def _save(
     save_texture: bool = False,
     save_normals: bool = False,
 ) -> None:
-
     if len(verts) and (verts.dim() != 2 or verts.size(1) != 3):
         message = "'verts' should either be empty or of shape (num_verts, 3)."
         raise ValueError(message)

@@ -7,6 +7,7 @@
 # pyre-unsafe
 
 """This module implements utility functions for loading .mtl files and textures."""
+
 import os
 import warnings
 from typing import Dict, List, Optional, Tuple
@@ -409,6 +410,7 @@ def _parse_mtl(
     texture_files = {}
     material_name = ""
 
+    # pyre-fixme[9]: f has type `str`; used as `IO[typing.Any]`.
     with _open_file(f, path_manager, "r") as f:
         for line in f:
             tokens = line.strip().split()

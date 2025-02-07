@@ -213,8 +213,8 @@ std::tuple<size_t, size_t, bool, torch::Tensor> Renderer::arg_check(
     const float& gamma,
     const float& max_depth,
     float& min_depth,
-    const c10::optional<torch::Tensor>& bg_col,
-    const c10::optional<torch::Tensor>& opacity,
+    const std::optional<torch::Tensor>& bg_col,
+    const std::optional<torch::Tensor>& opacity,
     const float& percent_allowed_difference,
     const uint& max_n_hits,
     const uint& mode) {
@@ -668,8 +668,8 @@ std::tuple<torch::Tensor, torch::Tensor> Renderer::forward(
     const float& gamma,
     const float& max_depth,
     float min_depth,
-    const c10::optional<torch::Tensor>& bg_col,
-    const c10::optional<torch::Tensor>& opacity,
+    const std::optional<torch::Tensor>& bg_col,
+    const std::optional<torch::Tensor>& opacity,
     const float& percent_allowed_difference,
     const uint& max_n_hits,
     const uint& mode) {
@@ -888,14 +888,14 @@ std::tuple<torch::Tensor, torch::Tensor> Renderer::forward(
 };
 
 std::tuple<
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>,
-    at::optional<torch::Tensor>>
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>,
+    std::optional<torch::Tensor>>
 Renderer::backward(
     const torch::Tensor& grad_im,
     const torch::Tensor& image,
@@ -912,8 +912,8 @@ Renderer::backward(
     const float& gamma,
     const float& max_depth,
     float min_depth,
-    const c10::optional<torch::Tensor>& bg_col,
-    const c10::optional<torch::Tensor>& opacity,
+    const std::optional<torch::Tensor>& bg_col,
+    const std::optional<torch::Tensor>& opacity,
     const float& percent_allowed_difference,
     const uint& max_n_hits,
     const uint& mode,
@@ -922,7 +922,7 @@ Renderer::backward(
     const bool& dif_rad,
     const bool& dif_cam,
     const bool& dif_opy,
-    const at::optional<std::pair<uint, uint>>& dbg_pos) {
+    const std::optional<std::pair<uint, uint>>& dbg_pos) {
   this->ensure_on_device(this->device_tracker.device());
   size_t batch_size;
   size_t n_points;
@@ -1045,14 +1045,14 @@ Renderer::backward(
   }
   // Prepare the return value.
   std::tuple<
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>,
-      at::optional<torch::Tensor>>
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>,
+      std::optional<torch::Tensor>>
       ret;
   if (mode == 1 || (!dif_pos && !dif_col && !dif_rad && !dif_cam && !dif_opy)) {
     return ret;

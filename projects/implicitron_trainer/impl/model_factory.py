@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 
 
 class ModelFactoryBase(ReplaceableBase):
-
     resume: bool = True  # resume from the last checkpoint
 
     def __call__(self, **kwargs) -> ImplicitronModelBase:
@@ -45,7 +44,7 @@ class ModelFactoryBase(ReplaceableBase):
 
 
 @registry.register
-class ImplicitronModelFactory(ModelFactoryBase):  # pyre-ignore [13]
+class ImplicitronModelFactory(ModelFactoryBase):
     """
     A factory class that initializes an implicit rendering model.
 
@@ -61,6 +60,7 @@ class ImplicitronModelFactory(ModelFactoryBase):  # pyre-ignore [13]
 
     """
 
+    # pyre-fixme[13]: Attribute `model` is never initialized.
     model: ImplicitronModelBase
     model_class_type: str = "GenericModel"
     resume: bool = True
@@ -115,7 +115,9 @@ class ImplicitronModelFactory(ModelFactoryBase):  # pyre-ignore [13]
                         "cuda:%d" % 0: "cuda:%d" % accelerator.local_process_index
                     }
                 model_state_dict = torch.load(
-                    model_io.get_model_path(model_path), map_location=map_location
+                    model_io.get_model_path(model_path),
+                    map_location=map_location,
+                    weights_only=True,
                 )
 
                 try:

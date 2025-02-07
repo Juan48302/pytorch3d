@@ -100,7 +100,6 @@ def render_point_cloud_pytorch3d(
     bin_size: Optional[int] = None,
     **kwargs,
 ):
-
     # feature dimension
     featdim = point_cloud.features_packed().shape[-1]
 
@@ -156,7 +155,6 @@ def render_point_cloud_pytorch3d(
     cumprod = torch.cat((torch.ones_like(cumprod[..., :1]), cumprod[..., :-1]), dim=-1)
     depths = (weights * cumprod * fragments.zbuf).sum(dim=-1)
     # add the rendering mask
-    # pyre-fixme[6]: For 1st param expected `Tensor` but got `float`.
     render_mask = -torch.prod(1.0 - weights, dim=-1) + 1.0
 
     # cat depths and render mask

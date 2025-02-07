@@ -311,9 +311,7 @@ def plot_scene(
             )
         else:
             msg = "Invalid number {} of viewpoint cameras were provided. Either 1 \
-            or {} cameras are required".format(
-                len(viewpoint_cameras), len(subplots)
-            )
+            or {} cameras are required".format(len(viewpoint_cameras), len(subplots))
             warnings.warn(msg)
 
     for subplot_idx in range(len(subplots)):
@@ -369,6 +367,7 @@ def plot_scene(
         # update camera viewpoint if provided
         if viewpoints_eye_at_up_world is not None:
             # Use camera params for batch index or the first camera if only one provided.
+            # pyre-fixme[61]: `n_viewpoint_cameras` is undefined, or not always defined.
             viewpoint_idx = min(n_viewpoint_cameras - 1, subplot_idx)
 
             eye, at, up = (i[viewpoint_idx] for i in viewpoints_eye_at_up_world)
@@ -587,9 +586,15 @@ def _add_struct_from_batch(
     if isinstance(batched_struct, CamerasBase):
         # we can't index directly into camera batches
         R, T = batched_struct.R, batched_struct.T
+        # pyre-fixme[6]: For 1st argument expected
+        #  `pyre_extensions.PyreReadOnly[Sized]` but got `Union[Tensor, Module]`.
         r_idx = min(scene_num, len(R) - 1)
+        # pyre-fixme[6]: For 1st argument expected
+        #  `pyre_extensions.PyreReadOnly[Sized]` but got `Union[Tensor, Module]`.
         t_idx = min(scene_num, len(T) - 1)
+        # pyre-fixme[29]: `Union[(self: TensorBase, indices: Union[None, slice[Any, A...
         R = R[r_idx].unsqueeze(0)
+        # pyre-fixme[29]: `Union[(self: TensorBase, indices: Union[None, slice[Any, A...
         T = T[t_idx].unsqueeze(0)
         struct = CamerasBase(device=batched_struct.device, R=R, T=T)
     elif _is_ray_bundle(batched_struct) and not _is_heterogeneous_ray_bundle(
@@ -627,7 +632,7 @@ def _add_struct_from_batch(
 
 
 def _add_mesh_trace(
-    fig: go.Figure,  # pyre-ignore[11]
+    fig: go.Figure,
     meshes: Meshes,
     trace_name: str,
     subplot_idx: int,
@@ -988,7 +993,7 @@ def _gen_fig_with_subplots(
 def _update_axes_bounds(
     verts_center: torch.Tensor,
     max_expand: float,
-    current_layout: go.Scene,  # pyre-ignore[11]
+    current_layout: go.Scene,
 ) -> None:  # pragma: no cover
     """
     Takes in the vertices' center point and max spread, and the current plotly figure

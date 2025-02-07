@@ -308,9 +308,7 @@ class TestTransform(TestCaseMixin, unittest.TestCase):
         t1._matrix = torch.FloatTensor(persp_proj)
         points = torch.tensor(
             [[0.0, 1.0, 0.0], [0.0, 0.0, 1e-5], [-1.0, 0.0, 1e-5]]
-        ).view(
-            1, 3, 3
-        )  # a set of points with z-coord very close to 0
+        ).view(1, 3, 3)  # a set of points with z-coord very close to 0
 
         proj = t1.transform_points(points)
         proj_eps = t1.transform_points(points, eps=1e-4)
@@ -323,7 +321,6 @@ class TestTransform(TestCaseMixin, unittest.TestCase):
 
         # generate a random chain of transforms
         for _ in range(10):  # 10 different tries
-
             # list of transform matrices
             ts = []
 
@@ -685,6 +682,15 @@ class TestTranslate(unittest.TestCase):
         self.assertTrue(torch.allclose(im, im_comp))
         self.assertTrue(torch.allclose(im, im_2))
 
+    def test_get_item(self, batch_size=5):
+        device = torch.device("cuda:0")
+        xyz = torch.randn(size=[batch_size, 3], device=device, dtype=torch.float32)
+        t3d = Translate(xyz)
+        index = 1
+        t3d_selected = t3d[index]
+        self.assertEqual(len(t3d_selected), 1)
+        self.assertIsInstance(t3d_selected, Translate)
+
 
 class TestScale(unittest.TestCase):
     def test_single_python_scalar(self):
@@ -871,6 +877,15 @@ class TestScale(unittest.TestCase):
         self.assertTrue(torch.allclose(im, im_comp))
         self.assertTrue(torch.allclose(im, im_2))
 
+    def test_get_item(self, batch_size=5):
+        device = torch.device("cuda:0")
+        s = torch.randn(size=[batch_size, 3], device=device, dtype=torch.float32)
+        t3d = Scale(s)
+        index = 1
+        t3d_selected = t3d[index]
+        self.assertEqual(len(t3d_selected), 1)
+        self.assertIsInstance(t3d_selected, Scale)
+
 
 class TestTransformBroadcast(unittest.TestCase):
     def test_broadcast_transform_points(self):
@@ -985,6 +1000,15 @@ class TestRotate(unittest.TestCase):
         im_comp = t.get_matrix().inverse()
         self.assertTrue(torch.allclose(im, im_comp, atol=1e-4))
         self.assertTrue(torch.allclose(im, im_2, atol=1e-4))
+
+    def test_get_item(self, batch_size=5):
+        device = torch.device("cuda:0")
+        r = random_rotations(batch_size, dtype=torch.float32, device=device)
+        t3d = Rotate(r)
+        index = 1
+        t3d_selected = t3d[index]
+        self.assertEqual(len(t3d_selected), 1)
+        self.assertIsInstance(t3d_selected, Rotate)
 
 
 class TestRotateAxisAngle(unittest.TestCase):

@@ -24,9 +24,10 @@ from .rgb_net import RayNormalColoringNetwork
 
 
 @registry.register
-class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):  # pyre-ignore[13]
+class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):
     render_features_dimensions: int = 3
     object_bounding_sphere: float = 1.0
+    # pyre-fixme[13]: Attribute `ray_tracer` is never initialized.
     ray_tracer: RayTracing
     ray_normal_coloring_network_args: DictConfig = get_default_args_field(
         RayNormalColoringNetwork
@@ -60,6 +61,7 @@ class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):  # pyre-ign
 
     def create_ray_tracer(self) -> None:
         self.ray_tracer = RayTracing(
+            # pyre-fixme[32]: Keyword argument must be a mapping with string keys.
             **self.ray_tracer_args,
             object_bounding_sphere=self.object_bounding_sphere,
         )
@@ -148,6 +150,8 @@ class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):  # pyre-ign
                 n_eik_points,
                 3,
                 #  but got `Union[device, Tensor, Module]`.
+                # pyre-fixme[6]: For 3rd argument expected `Union[None, int, str,
+                #  device]` but got `Union[device, Tensor, Module]`.
                 device=self._bg_color.device,
             ).uniform_(-eik_bounding_box, eik_bounding_box)
             eikonal_pixel_points = points.clone()
@@ -204,6 +208,7 @@ class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):  # pyre-ign
             ]
             normals_full.view(-1, 3)[surface_mask] = normals
             render_full.view(-1, self.render_features_dimensions)[surface_mask] = (
+                # pyre-fixme[29]: `Union[Tensor, Module]` is not a function.
                 self._rgb_network(
                     features,
                     differentiable_surface_points[None],
@@ -215,8 +220,7 @@ class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):  # pyre-ign
             )
             mask_full.view(-1, 1)[~surface_mask] = torch.sigmoid(
                 # pyre-fixme[6]: For 1st param expected `Tensor` but got `float`.
-                -self.soft_mask_alpha
-                * sdf_output[~surface_mask]
+                -self.soft_mask_alpha * sdf_output[~surface_mask]
             )
 
         # scatter points with surface_mask

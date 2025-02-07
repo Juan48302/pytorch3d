@@ -123,6 +123,7 @@ class ImplicitronOptimizerFactory(OptimizerFactoryBase):
         """
         # Get the parameters to optimize
         if hasattr(model, "_get_param_groups"):  # use the model function
+            # pyre-fixme[29]: `Union[Tensor, Module]` is not a function.
             p_groups = model._get_param_groups(self.lr, wd=self.weight_decay)
         else:
             p_groups = [
@@ -241,7 +242,7 @@ class ImplicitronOptimizerFactory(OptimizerFactoryBase):
                     map_location = {
                         "cuda:%d" % 0: "cuda:%d" % accelerator.local_process_index
                     }
-                optimizer_state = torch.load(opt_path, map_location)
+                optimizer_state = torch.load(opt_path, map_location, weights_only=True)
             else:
                 raise FileNotFoundError(f"Optimizer state {opt_path} does not exist.")
         return optimizer_state

@@ -30,13 +30,13 @@ from .utils import seed_all_random_engines
 logger = logging.getLogger(__name__)
 
 
-# pyre-fixme[13]: Attribute `evaluator` is never initialized.
 class TrainingLoopBase(ReplaceableBase):
     """
     Members:
         evaluator: An EvaluatorBase instance, used to evaluate training results.
     """
 
+    # pyre-fixme[13]: Attribute `evaluator` is never initialized.
     evaluator: Optional[EvaluatorBase]
     evaluator_class_type: Optional[str] = "ImplicitronEvaluator"
 
@@ -161,7 +161,6 @@ class ImplicitronTrainingLoop(TrainingLoopBase):
         for epoch in range(start_epoch, self.max_epochs):
             # automatic new_epoch and plotting of stats at every epoch start
             with stats:
-
                 # Make sure to re-seed random generators to ensure reproducibility
                 # even after restart.
                 seed_all_random_engines(seed + epoch)
@@ -395,6 +394,7 @@ class ImplicitronTrainingLoop(TrainingLoopBase):
             ):
                 prefix = f"e{stats.epoch}_it{stats.it[trainmode]}"
                 if hasattr(model, "visualize"):
+                    # pyre-fixme[29]: `Union[Tensor, Module]` is not a function.
                     model.visualize(
                         viz,
                         visdom_env_imgs,

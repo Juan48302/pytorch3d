@@ -168,7 +168,7 @@ def _get_culled_faces(face_verts: torch.Tensor, frustum: ClipFrustum) -> torch.T
             position of the clipping planes.
 
     Returns:
-        faces_culled: An boolean tensor of size F specifying whether or not each face should be
+        faces_culled: boolean tensor of size F specifying whether or not each face should be
             culled.
     """
     clipping_planes = (
@@ -497,6 +497,7 @@ def clip_faces(
     faces_case3 = face_verts_unclipped[case3_unclipped_idx]
 
     # index (0, 1, or 2) of the vertex in front of the clipping plane
+    # pyre-fixme[61]: `faces_clipped_verts` is undefined, or not always defined.
     p1_face_ind = torch.where(~faces_clipped_verts[case3_unclipped_idx])[1]
 
     # Solve for the points p4, p5 that intersect the clipping plane
@@ -540,6 +541,7 @@ def clip_faces(
     faces_case4 = face_verts_unclipped[case4_unclipped_idx]
 
     # index (0, 1, or 2) of the vertex behind the clipping plane
+    # pyre-fixme[61]: `faces_clipped_verts` is undefined, or not always defined.
     p1_face_ind = torch.where(faces_clipped_verts[case4_unclipped_idx])[1]
 
     # Solve for the points p4, p5 that intersect the clipping plane

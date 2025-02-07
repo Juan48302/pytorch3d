@@ -7,7 +7,7 @@
 
 # pyre-unsafe
 
-""""
+""" "
 This file is the entry point for launching experiments with Implicitron.
 
 Launch Training
@@ -44,6 +44,7 @@ The outputs of the experiment are saved and logged in multiple ways:
         config file.
 
 """
+
 import logging
 import os
 import warnings
@@ -99,7 +100,7 @@ except ModuleNotFoundError:
 no_accelerate = os.environ.get("PYTORCH3D_NO_ACCELERATE") is not None
 
 
-class Experiment(Configurable):  # pyre-ignore: 13
+class Experiment(Configurable):
     """
     This class is at the top level of Implicitron's config hierarchy. Its
     members are high-level components necessary for training an implicit rende-
@@ -120,12 +121,16 @@ class Experiment(Configurable):  # pyre-ignore: 13
             will be saved here.
     """
 
+    # pyre-fixme[13]: Attribute `data_source` is never initialized.
     data_source: DataSourceBase
     data_source_class_type: str = "ImplicitronDataSource"
+    # pyre-fixme[13]: Attribute `model_factory` is never initialized.
     model_factory: ModelFactoryBase
     model_factory_class_type: str = "ImplicitronModelFactory"
+    # pyre-fixme[13]: Attribute `optimizer_factory` is never initialized.
     optimizer_factory: OptimizerFactoryBase
     optimizer_factory_class_type: str = "ImplicitronOptimizerFactory"
+    # pyre-fixme[13]: Attribute `training_loop` is never initialized.
     training_loop: TrainingLoopBase
     training_loop_class_type: str = "ImplicitronTrainingLoop"
 

@@ -11,6 +11,7 @@
 This module implements utility functions for loading and saving
 meshes and point clouds as PLY files.
 """
+
 import itertools
 import os
 import struct
@@ -1246,7 +1247,7 @@ def _save_ply(
         return
 
     color_np_type = np.ubyte if colors_as_uint8 else np.float32
-    verts_dtype = [("verts", np.float32, 3)]
+    verts_dtype: list = [("verts", np.float32, 3)]
     if verts_normals is not None:
         verts_dtype.append(("normals", np.float32, 3))
     if verts_colors is not None:
