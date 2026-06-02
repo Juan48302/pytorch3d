@@ -118,7 +118,6 @@ def weighted_sum_losses(
         return None
     loss = sum(losses_weighted)
     assert torch.is_tensor(loss)
-    # pyrefly: ignore [bad-return]
     return loss
 
 

@@ -261,7 +261,6 @@ class TexturesBase:
                     f"Property {p} has unsupported type {type(t)}."
                     "Only tensors and lists are supported."
                 )
-        # pyrefly: ignore [bad-return]
         return new_props
 
     def _getitem(self, index: Union[int, slice], props: List[str]):
@@ -276,7 +275,6 @@ class TexturesBase:
                     t = t()  # class method
                 new_props[p] = t[index] if t is not None else None
         elif isinstance(index, list):
-            # pyrefly: ignore [bad-assignment]
             index = torch.tensor(index)
         if isinstance(index, torch.Tensor):
             if index.dtype == torch.bool:
@@ -453,7 +451,6 @@ class TexturesAtlas(TexturesBase):
                 msg = "Expected atlas to be of shape (N, F, R, R, C); got %r"
                 raise ValueError(msg % repr(atlas.ndim))
             self._atlas_padded = atlas
-            # pyrefly: ignore [bad-assignment]
             self._atlas_list = None
             self.device = atlas.device
 
@@ -477,7 +474,6 @@ class TexturesAtlas(TexturesBase):
         if self._atlas_list is not None:
             tex._atlas_list = [atlas.clone() for atlas in self._atlas_list]
         num_faces = (
-            # pyrefly: ignore [missing-attribute]
             self._num_faces_per_mesh.clone()
             if torch.is_tensor(self._num_faces_per_mesh)
             else self._num_faces_per_mesh
@@ -491,7 +487,6 @@ class TexturesAtlas(TexturesBase):
         if self._atlas_list is not None:
             tex._atlas_list = [atlas.detach() for atlas in self._atlas_list]
         num_faces = (
-            # pyrefly: ignore [missing-attribute]
             self._num_faces_per_mesh.detach()
             if torch.is_tensor(self._num_faces_per_mesh)
             else self._num_faces_per_mesh
@@ -509,11 +504,9 @@ class TexturesAtlas(TexturesBase):
             new_tex = self.__class__(atlas=atlas)
         elif torch.is_tensor(atlas):
             # single element
-            # pyrefly: ignore [bad-argument-type]
             new_tex = self.__class__(atlas=[atlas])
         else:
             raise ValueError("Not all values are provided in the correct format")
-        # pyrefly: ignore [bad-assignment]
         new_tex._num_faces_per_mesh = new_props["_num_faces_per_mesh"]
         return new_tex
 
@@ -535,7 +528,6 @@ class TexturesAtlas(TexturesBase):
                 self._atlas_padded = [
                     torch.empty((0, 0, 0, 3), dtype=torch.float32, device=self.device)
                 ] * self._N
-            # pyrefly: ignore [bad-assignment]
             self._atlas_list = _padded_to_list_wrapper(
                 self._atlas_padded, split_size=self._num_faces_per_mesh
             )
@@ -552,7 +544,6 @@ class TexturesAtlas(TexturesBase):
     def extend(self, N: int) -> "TexturesAtlas":
         new_props = self._extend(N, ["atlas_padded", "_num_faces_per_mesh"])
         new_tex = self.__class__(atlas=new_props["atlas_padded"])
-        # pyrefly: ignore [bad-assignment]
         new_tex._num_faces_per_mesh = new_props["_num_faces_per_mesh"]
         return new_tex
 
@@ -799,7 +790,6 @@ class TexturesUV(TexturesBase):
                 msg = "Expected faces_uvs to be of shape (N, F, 3); got %r"
                 raise ValueError(msg % repr(faces_uvs.shape))
             self._faces_uvs_padded = faces_uvs
-            # pyrefly: ignore [bad-assignment]
             self._faces_uvs_list = None
             self.device = faces_uvs.device
 
@@ -836,7 +826,6 @@ class TexturesUV(TexturesBase):
                 msg = "Expected verts_uvs to be of shape (N, V, 2); got %r"
                 raise ValueError(msg % repr(verts_uvs.shape))
             self._verts_uvs_padded = verts_uvs
-            # pyrefly: ignore [bad-assignment]
             self._verts_uvs_list = None
 
             if verts_uvs.device != self.device:
@@ -849,7 +838,6 @@ class TexturesUV(TexturesBase):
         if isinstance(maps, (list, tuple)):
             self._maps_list = maps
         else:
-            # pyrefly: ignore [bad-assignment]
             self._maps_list = None
         self._maps_padded = self._format_maps_padded(maps)
 
@@ -978,7 +966,6 @@ class TexturesUV(TexturesBase):
         if self._maps_ids_list is not None:
             tex._maps_ids_list = [f.clone() for f in self._maps_ids_list]
         num_faces = (
-            # pyrefly: ignore [missing-attribute]
             self._num_faces_per_mesh.clone()
             if torch.is_tensor(self._num_faces_per_mesh)
             else self._num_faces_per_mesh
@@ -1010,7 +997,6 @@ class TexturesUV(TexturesBase):
         if self._maps_ids_list is not None:
             tex._maps_ids_list = [mi.detach() for mi in self._maps_ids_list]
         num_faces = (
-            # pyrefly: ignore [missing-attribute]
             self._num_faces_per_mesh.detach()
             if torch.is_tensor(self._num_faces_per_mesh)
             else self._num_faces_per_mesh
@@ -1040,11 +1026,8 @@ class TexturesUV(TexturesBase):
                     "Maps ids are  not in the correct format expected list or tuple"
                 )
             new_tex = self.__class__(
-                # pyrefly: ignore [bad-argument-type]
                 faces_uvs=faces_uvs,
-                # pyrefly: ignore [bad-argument-type]
                 verts_uvs=verts_uvs,
-                # pyrefly: ignore [bad-argument-type]
                 maps=maps,
                 maps_ids=maps_ids,
                 padding_mode=self.padding_mode,
@@ -1057,11 +1040,8 @@ class TexturesUV(TexturesBase):
                     "Maps ids are not in the correct format expected tensor"
                 )
             new_tex = self.__class__(
-                # pyrefly: ignore [bad-argument-type]
                 faces_uvs=[faces_uvs],
-                # pyrefly: ignore [bad-argument-type]
                 verts_uvs=[verts_uvs],
-                # pyrefly: ignore [bad-argument-type]
                 maps=[maps],
                 maps_ids=[maps_ids] if maps_ids is not None else None,
                 padding_mode=self.padding_mode,
@@ -1070,7 +1050,6 @@ class TexturesUV(TexturesBase):
             )
         else:
             raise ValueError("Not all values are provided in the correct format")
-        # pyrefly: ignore [bad-assignment]
         new_tex._num_faces_per_mesh = new_props["_num_faces_per_mesh"]
         return new_tex
 
@@ -1093,11 +1072,9 @@ class TexturesUV(TexturesBase):
                     torch.empty((0, 3), dtype=torch.float32, device=self.device)
                 ] * self._N
             else:
-                # pyrefly: ignore [bad-assignment]
                 self._faces_uvs_list = padded_to_list(
                     self._faces_uvs_padded, split_size=self._num_faces_per_mesh
                 )
-        # pyrefly: ignore [bad-return]
         return self._faces_uvs_list
 
     def verts_uvs_padded(self) -> torch.Tensor:
@@ -1122,9 +1099,7 @@ class TexturesUV(TexturesBase):
                 # The number of vertices in the mesh and in verts_uvs can differ
                 # e.g. if a vertex is shared between 3 faces, it can
                 # have up to 3 different uv coordinates.
-                # pyrefly: ignore [bad-assignment]
                 self._verts_uvs_list = list(self._verts_uvs_padded.unbind(0))
-        # pyrefly: ignore [bad-return]
         return self._verts_uvs_list
 
     def maps_ids_padded(self) -> Optional[torch.Tensor]:
@@ -1132,10 +1107,8 @@ class TexturesUV(TexturesBase):
 
     def maps_ids_list(self) -> Optional[List[torch.Tensor]]:
         if self._maps_ids_list is not None:
-            # pyrefly: ignore [bad-return]
             return self._maps_ids_list
         elif self._maps_ids_padded is not None:
-            # pyrefly: ignore [bad-return]
             return self._maps_ids_padded.unbind(0)
         else:
             return None
@@ -1170,7 +1143,6 @@ class TexturesUV(TexturesBase):
             sampling_mode=self.sampling_mode,
         )
 
-        # pyrefly: ignore [bad-assignment]
         new_tex._num_faces_per_mesh = new_props["_num_faces_per_mesh"]
         return new_tex
 
@@ -1744,7 +1716,6 @@ class TexturesVertex(TexturesBase):
                 msg = "Expected verts_features to be of shape (N, V, C); got %r"
                 raise ValueError(msg % repr(verts_features.shape))
             self._verts_features_padded = verts_features
-            # pyrefly: ignore [bad-assignment]
             self._verts_features_list = None
             self.device = verts_features.device
 
@@ -1792,11 +1763,9 @@ class TexturesVertex(TexturesBase):
                 )
             new_tex = self.__class__(verts_features=verts_features)
         elif torch.is_tensor(verts_features):
-            # pyrefly: ignore [bad-argument-type]
             new_tex = self.__class__(verts_features=[verts_features])
         else:
             raise ValueError("Not all values are provided in the correct format")
-        # pyrefly: ignore [bad-assignment]
         new_tex._num_verts_per_mesh = new_props["_num_verts_per_mesh"]
         return new_tex
 
@@ -1819,11 +1788,9 @@ class TexturesVertex(TexturesBase):
                     torch.empty((0, 3), dtype=torch.float32, device=self.device)
                 ] * self._N
             else:
-                # pyrefly: ignore [bad-assignment]
                 self._verts_features_list = padded_to_list(
                     self._verts_features_padded, split_size=self._num_verts_per_mesh
                 )
-        # pyrefly: ignore [bad-return]
         return self._verts_features_list
 
     def verts_features_packed(self) -> torch.Tensor:
@@ -1835,7 +1802,6 @@ class TexturesVertex(TexturesBase):
     def extend(self, N: int) -> "TexturesVertex":
         new_props = self._extend(N, ["verts_features_padded", "_num_verts_per_mesh"])
         new_tex = self.__class__(verts_features=new_props["verts_features_padded"])
-        # pyrefly: ignore [bad-assignment]
         new_tex._num_verts_per_mesh = new_props["_num_verts_per_mesh"]
         return new_tex
 

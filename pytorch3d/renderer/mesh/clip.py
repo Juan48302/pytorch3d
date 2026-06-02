@@ -496,12 +496,7 @@ def clip_faces(
 
     # Solve for the points p4, p5 that intersect the clipping plane
     p, p_barycentric = _find_verts_intersecting_clipping_plane(
-        # pyrefly: ignore [bad-argument-type]
-        faces_case3,
-        p1_face_ind,
-        # pyrefly: ignore [bad-argument-type]
-        z_clip_value,
-        perspective_correct,
+        faces_case3, p1_face_ind, z_clip_value, perspective_correct
     )
 
     p1, _, _, p4, p5 = p
@@ -545,12 +540,7 @@ def clip_faces(
 
     # Solve for the points p4, p5 that intersect the clipping plane
     p, p_barycentric = _find_verts_intersecting_clipping_plane(
-        # pyrefly: ignore [bad-argument-type]
-        faces_case4,
-        p1_face_ind,
-        # pyrefly: ignore [bad-argument-type]
-        z_clip_value,
-        perspective_correct,
+        faces_case4, p1_face_ind, z_clip_value, perspective_correct
     )
     _, p2, p3, p4, p5 = p
     _, p2_barycentric, p3_barycentric, p4_barycentric, p5_barycentric = p_barycentric
@@ -692,7 +682,6 @@ def convert_clipped_rasterization_to_original_faces(
         # rasterized pixel.
         pix_to_conversion_idx = torch.where(
             pix_to_face_clipped != -1,
-            # pyrefly: ignore [unsupported-operation]
             faces_clipped_to_conversion_idx[pix_to_face_clipped],
             empty,
         )
@@ -720,7 +709,6 @@ def convert_clipped_rasterization_to_original_faces(
             bary_coords_clipped_subset
         )
 
-        # pyrefly: ignore [no-matching-overload]
         bary_coords_unclipped_subset = bary_coords_unclipped_subset.reshape([N * 3])
         bary_coords_unclipped[faces_to_convert_mask_expanded] = (
             bary_coords_unclipped_subset

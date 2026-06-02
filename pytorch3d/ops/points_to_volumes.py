@@ -141,7 +141,6 @@ class _points_to_volumes_function(Function):
 
     @staticmethod
     @once_differentiable
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_volume_densities, grad_volume_features):
         splat = ctx.splat
         N, C = grad_volume_features.shape[:2]
@@ -378,7 +377,6 @@ def add_points_features_to_volume_densities_features(
     if grid_sizes is None:
         # grid sizes shape (minibatch, 3)
         grid_sizes = (
-            # pyrefly: ignore [bad-assignment]
             torch.LongTensor(list(volume_densities.shape[2:]))
             .to(volume_densities.device)
             .expand(volume_densities.shape[0], 3)

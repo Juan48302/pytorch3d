@@ -101,7 +101,6 @@ class _SigmoidAlphaBlend(torch.autograd.Function):
         return alphas
 
     @staticmethod
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_alphas):
         dists, pix_to_face, alphas = ctx.saved_tensors
         sigma = ctx.sigma
@@ -213,10 +212,8 @@ def softmax_rgb_blend(
 
     # Reshape to be compatible with (N, H, W, K) values in fragments
     if torch.is_tensor(zfar):
-        # pyrefly: ignore [bad-index]
         zfar = zfar[:, None, None, None]
     if torch.is_tensor(znear):
-        # pyrefly: ignore [bad-index]
         znear = znear[:, None, None, None]
 
     # pyre-fixme[6]: Expected `float` but got `Union[float, Tensor]`

@@ -14,7 +14,6 @@ import torch
 
 
 def seed_all_random_engines(seed: int) -> None:
-    # pyrefly: ignore [bad-argument-type]
     np.random.seed(seed)
     torch.manual_seed(seed)
     random.seed(seed)

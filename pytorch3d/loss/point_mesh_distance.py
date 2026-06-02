@@ -81,7 +81,6 @@ class _PointFaceDistance(Function):
 
     @staticmethod
     @once_differentiable
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_dists):
         grad_dists = grad_dists.contiguous()
         points, tris, idxs = ctx.saved_tensors
@@ -144,7 +143,6 @@ class _FacePointDistance(Function):
 
     @staticmethod
     @once_differentiable
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_dists):
         grad_dists = grad_dists.contiguous()
         points, tris, idxs = ctx.saved_tensors
@@ -196,7 +194,6 @@ class _PointEdgeDistance(Function):
 
     @staticmethod
     @once_differentiable
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_dists):
         grad_dists = grad_dists.contiguous()
         points, segms, idxs = ctx.saved_tensors
@@ -247,7 +244,6 @@ class _EdgePointDistance(Function):
 
     @staticmethod
     @once_differentiable
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_dists):
         grad_dists = grad_dists.contiguous()
         points, segms, idxs = ctx.saved_tensors

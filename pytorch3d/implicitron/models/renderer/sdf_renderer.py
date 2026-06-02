@@ -146,7 +146,6 @@ class SignedDistanceFunctionRenderer(BaseRenderer, torch.nn.Module):
             # Sample points for the eikonal loss
             eik_bounding_box: float = self.object_bounding_sphere
             n_eik_points = batch_size * num_pixels // 2
-            # pyrefly: ignore [no-matching-overload]
             eikonal_points = torch.empty(
                 n_eik_points,
                 3,

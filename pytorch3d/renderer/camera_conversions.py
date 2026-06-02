@@ -86,7 +86,6 @@ def _opencv_from_cameras_projection(
     scale = scale.expand(-1, 2)
     c0 = image_size_wh / 2.0
 
-    # pyrefly: ignore [unsupported-operation]
     principal_point = -p0_pytorch3d * scale + c0
     focal_length = focal_pytorch3d * scale
 

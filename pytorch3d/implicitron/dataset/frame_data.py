@@ -297,11 +297,7 @@ class FrameData(Mapping[str, Any]):
         depth_map = self.depth_map
         if depth_map is not None:
             clamp_bbox_xyxy_depth = rescale_bbox(
-                # pyrefly: ignore [bad-argument-type]
-                clamp_bbox_xyxy,
-                # pyrefly: ignore [bad-argument-type]
-                tuple(depth_map.shape[-2:]),
-                effective_image_size_hw,
+                clamp_bbox_xyxy, tuple(depth_map.shape[-2:]), effective_image_size_hw
             ).long()
             self.depth_map = crop_around_box(
                 depth_map,
@@ -312,11 +308,7 @@ class FrameData(Mapping[str, Any]):
         depth_mask = self.depth_mask
         if depth_mask is not None:
             clamp_bbox_xyxy_depth = rescale_bbox(
-                # pyrefly: ignore [bad-argument-type]
-                clamp_bbox_xyxy,
-                # pyrefly: ignore [bad-argument-type]
-                tuple(depth_mask.shape[-2:]),
-                effective_image_size_hw,
+                clamp_bbox_xyxy, tuple(depth_mask.shape[-2:]), effective_image_size_hw
             ).long()
             self.depth_mask = crop_around_box(
                 depth_mask,
@@ -461,7 +453,6 @@ class FrameDataBuilderBase(ReplaceableBase, Generic[FrameDataSubtype], ABC):
     """
 
     # To be initialised to FrameDataSubtype
-    # pyrefly: ignore [invalid-annotation]
     frame_data_type: ClassVar[Type[FrameDataSubtype]]
 
     @abstractmethod

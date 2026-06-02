@@ -200,7 +200,6 @@ class R2N2(ShapeNetBase):  # pragma: no cover
             ) % (shapenet_dir, ", ".join(synset_not_present))
             warnings.warn(msg)
 
-    # pyrefly: ignore [bad-override]
     def __getitem__(self, model_idx, view_idxs: Optional[List[int]] = None) -> Dict:
         """
         Read a model by the given index.
@@ -371,7 +370,6 @@ class R2N2(ShapeNetBase):  # pragma: no cover
         T = RT[3, :3]
         return R, T
 
-    # pyrefly: ignore [bad-override]
     def render(
         self,
         model_ids: Optional[List[str]] = None,

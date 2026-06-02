@@ -72,7 +72,6 @@ class _InterpFaceAttrs(Function):
 
     @staticmethod
     @once_differentiable
-    # pyrefly: ignore [bad-override]
     def backward(ctx, grad_pix_attrs):
         args = ctx.saved_tensors
         args = args + (grad_pix_attrs,)

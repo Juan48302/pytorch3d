@@ -121,9 +121,7 @@ class PulsarPointsRenderer(nn.Module):
                 "gamma is a required keyword argument for the PulsarPointsRenderer!"
             )
         if (
-            # pyrefly: ignore [bad-argument-type]
             len(point_clouds) != len(self.rasterizer.cameras)
-            # pyrefly: ignore [bad-argument-type]
             and len(self.rasterizer.cameras) != 1
         ):
             raise ValueError(
@@ -134,7 +132,6 @@ class PulsarPointsRenderer(nn.Module):
                 )
                 % (
                     len(point_clouds),
-                    # pyrefly: ignore [bad-argument-type]
                     len(self.rasterizer.cameras),
                 )
             )
@@ -144,7 +141,6 @@ class PulsarPointsRenderer(nn.Module):
             self.rasterizer.cameras, (FoVOrthographicCameras, OrthographicCameras)
         )
         if orthogonal_projection != self.renderer._renderer.orthogonal:
-            # pyrefly: ignore [unsupported-operation]
             raise ValueError(
                 "The camera type can not be changed after renderer initialization! "
                 "Current camera orthogonal: %r. Original orthogonal: %r."
@@ -223,7 +219,6 @@ class PulsarPointsRenderer(nn.Module):
                 )
             else:
                 # Currently, this means it must be an 'OrthographicCameras' object.
-                # pyrefly: ignore [missing-attribute]
                 focal_length_conf = kwargs.get("focal_length", cameras.focal_length)[
                     cloud_idx
                 ]
@@ -254,13 +249,11 @@ class PulsarPointsRenderer(nn.Module):
                 znear = kwargs["znear"][cloud_idx]
                 zfar = kwargs["zfar"][cloud_idx]
                 principal_point_x = (
-                    # pyrefly: ignore [missing-attribute]
                     kwargs.get("principal_point", cameras.principal_point)[cloud_idx][0]
                     * 0.5
                     * self.renderer._renderer.width
                 )
                 principal_point_y = (
-                    # pyrefly: ignore [missing-attribute]
                     kwargs.get("principal_point", cameras.principal_point)[cloud_idx][1]
                     * 0.5
                     * self.renderer._renderer.height
@@ -268,26 +261,20 @@ class PulsarPointsRenderer(nn.Module):
         else:
             if not isinstance(cameras, PerspectiveCameras):
                 # Create a virtual focal length that is closer than znear.
-                # pyrefly: ignore [missing-attribute]
                 znear = kwargs.get("znear", cameras.znear)[cloud_idx]
-                # pyrefly: ignore [missing-attribute]
                 zfar = kwargs.get("zfar", cameras.zfar)[cloud_idx]
                 focal_length = znear - 1e-6
                 # Create a sensor size that matches the expected fov assuming this f.
-                # pyrefly: ignore [missing-attribute]
                 afov = kwargs.get("fov", cameras.fov)[cloud_idx]
-                # pyrefly: ignore [missing-attribute]
                 if kwargs.get("degrees", cameras.degrees):
                     afov *= math.pi / 180.0
                 sensor_width = math.tan(afov / 2.0) * 2.0 * focal_length
                 if not (
-                    # pyrefly: ignore [missing-attribute]
                     kwargs.get("aspect_ratio", cameras.aspect_ratio)[cloud_idx]
                     - self.renderer._renderer.width / self.renderer._renderer.height
                     < 1e-6
                 ):
                     raise ValueError(
-                        # pyrefly: ignore [missing-attribute]
                         "The aspect ratio ("
                         f"{kwargs.get('aspect_ratio', cameras.aspect_ratio)[cloud_idx]}) "
                         "must agree with the resolution width / height ("
@@ -374,9 +361,7 @@ class PulsarPointsRenderer(nn.Module):
         """
         # Shorthand:
         cameras = self.rasterizer.cameras
-        # pyrefly: ignore [missing-attribute]
         R = kwargs.get("R", cameras.R)[cloud_idx]
-        # pyrefly: ignore [missing-attribute]
         T = kwargs.get("T", cameras.T)[cloud_idx]
         tmp_cams = PerspectiveCameras(
             R=R.unsqueeze(0), T=T.unsqueeze(0), device=R.device
@@ -403,7 +388,6 @@ class PulsarPointsRenderer(nn.Module):
         # or itself a tensor.
         raster_rad = self.rasterizer.raster_settings.radius
         if kwargs.get("radius_world", False):
-            # pyrefly: ignore [bad-return]
             return raster_rad
         if (
             isinstance(raster_rad, torch.Tensor)

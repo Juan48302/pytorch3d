@@ -75,7 +75,6 @@ def visualize_reconstruction(
 
     # Set the random seeds
     torch.manual_seed(0)
-    # pyrefly: ignore [bad-argument-type]
     np.random.seed(0)
 
     # Get the config from the experiment_directory,
@@ -136,7 +135,6 @@ def visualize_reconstruction(
                 "device": device,
                 **render_flyaround_kwargs,
             }
-            # pyrefly: ignore [bad-argument-type]
             render_flyaround(**render_kwargs)
 
 
