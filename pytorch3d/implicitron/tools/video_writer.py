@@ -124,10 +124,12 @@ class VideoWriter:
         if im is not None:
             if resize is not None:
                 if isinstance(resize, float):
+                    # pyrefly: ignore [bad-assignment]
                     resize = [int(resize * s) for s in im.size]
             else:
                 resize = im.size
             # make sure size is divisible by 2
+            # pyrefly: ignore [bad-assignment, bad-index, unsupported-operation]
             resize = tuple([resize[i] + resize[i] % 2 for i in (0, 1)])
 
             im = im.resize(resize, Image.ANTIALIAS)

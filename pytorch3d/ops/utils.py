@@ -143,6 +143,7 @@ def convert_pointclouds_to_tensor(pcl: Union[torch.Tensor, "Pointclouds"]):
     elif torch.is_tensor(pcl):
         X = pcl
         num_points = X.shape[1] * torch.ones(  # type: ignore
+            # pyrefly: ignore [missing-attribute]
             X.shape[0],
             device=X.device,
             dtype=torch.int64,
