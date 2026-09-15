@@ -114,8 +114,6 @@ INLINE float atomicMin(float* address, float val) {
 #define FMA(x, y, z) ((x) * (y) + (z))
 #define I2F(a) static_cast<float>(a)
 #define FRCP(x) (1.f / (x))
-#define IASF(x, loc) memcpy(&(loc), &(x), sizeof(x))
-#define FASI(x, loc) memcpy(&(loc), &(x), sizeof(x))
 #define DMAX(a, b) std::max((a), (b))
 #define DMIN(a, b) std::min((a), (b))
 #define DSATURATE(a) DMIN(1., DMAX(0., (a)))

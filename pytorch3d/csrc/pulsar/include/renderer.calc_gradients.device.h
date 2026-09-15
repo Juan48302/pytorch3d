@@ -121,8 +121,8 @@ GLOBAL void calc_gradients(
       grad_im_l[2]);
   // Start processing.
   for (int grad_idx = 0; grad_idx < n_track; ++grad_idx) {
-    int sphere_idx;
-    FASI(forw_info_d[fwi_loc + 3 + 2 * grad_idx], sphere_idx);
+    int sphere_idx =
+        pulsar_float_as_int(forw_info_d[fwi_loc + 3 + 2 * grad_idx]);
     PASSERT(
         sphere_idx == -1 ||
         sphere_idx >= 0 && static_cast<uint>(sphere_idx) < num_balls);

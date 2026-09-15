@@ -406,7 +406,7 @@ GLOBAL void render(
         IMIN(n_track, tracker.get_n_hits()));
     for (int i = 0; i < n_track; ++i) {
       int sphere_id = tracker.get_closest_sphere_id(i);
-      IASF(sphere_id, forw_info_d[write_loc + 3 + i * 2]);
+      forw_info_d[write_loc + 3 + i * 2] = pulsar_int_as_float(sphere_id);
       forw_info_d[write_loc + 3 + i * 2 + 1] =
           tracker.get_closest_sphere_depth(i) == MAX_FLOAT
           ? -1.f

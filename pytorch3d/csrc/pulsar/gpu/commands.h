@@ -159,8 +159,6 @@ INLINE DEVICE float3 WARP_SUM_FLOAT3(
 #define FFLOOR(a) floorf(a)
 #define FROUND(x) nearbyintf(x)
 #define FABS(a) abs(a)
-#define IASF(a, loc) (loc) = __int_as_float(a)
-#define FASI(a, loc) (loc) = __float_as_int(a)
 #define FABSLEQAS(a, b, c) \
   ((a) <= (b) ? FSUB((b), (a)) <= (c) : FSUB((a), (b)) < (c))
 #define I2F(a) __int2float_rn(a)
