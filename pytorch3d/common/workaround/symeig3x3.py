@@ -77,6 +77,20 @@ class _SymEig3x3(nn.Module):
         if inputs.shape[-2:] != (3, 3):
             raise ValueError("Only inputs of shape (..., 3, 3) are supported.")
 
+        # The thresholds and regularizers used below are absolute, so they are
+        # only meaningful for inputs of order 1: rescale each matrix to unit
+        # maximum magnitude and undo it on the eigenvalues. The clamp only
+        # matters for the all-zero matrix. The scale is detached because the
+        # decomposition is homogeneous of degree 1, so its Jacobian is
+        # homogeneous of degree 0 and holding the scale constant is exact.
+        scale = (
+            inputs.detach()
+            .abs()
+            .amax(dim=(-2, -1), keepdim=True)
+            .clamp(min=torch.finfo(inputs.dtype).tiny)
+        )
+        inputs = inputs / scale
+
         inputs_diag = inputs.diagonal(dim1=-2, dim2=-1)
         inputs_trace = inputs_diag.sum(-1)
         q = inputs_trace / 3.0
@@ -120,7 +134,7 @@ class _SymEig3x3(nn.Module):
         else:
             eigenvecs = None
 
-        return eigenvals, eigenvecs
+        return eigenvals * scale.squeeze(-1), eigenvecs
 
     def _construct_eigenvecs_set(
         self, inputs: torch.Tensor, eigenvals: torch.Tensor

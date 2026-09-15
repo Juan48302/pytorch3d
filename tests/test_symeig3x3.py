@@ -66,6 +66,51 @@ class TestSymEig3x3(TestCaseMixin, unittest.TestCase):
             rtol=rtol,
         )
 
+    def test_is_eigen_scaled_gpu(self):
+        self._test_is_eigen_scaled(self._gpu)
+
+    def test_is_eigen_scaled_cpu(self):
+        self._test_is_eigen_scaled(self._cpu)
+
+    def _test_is_eigen_scaled(self, device):
+        """
+        The decomposition is homogeneous, so scaling the input must not affect
+        the relative accuracy of the result.
+        """
+        test_input = self.create_random_sym3x3(device, n=self.TEST_BATCH_SIZE)
+
+        for scale in (1e-6, 1e-4, 1e-2, 1e2, 1e4, 1e6):
+            scaled_input = test_input * scale
+
+            self._test_is_not_nan_or_inf(scaled_input)
+            self._test_is_eigen(scaled_input, atol=1e-04 * scale, rtol=1e-02)
+            self._test_eigenvectors_are_orthonormal(scaled_input)
+
+    def test_mixed_magnitudes_gpu(self):
+        self._test_mixed_magnitudes(self._gpu)
+
+    def test_mixed_magnitudes_cpu(self):
+        self._test_mixed_magnitudes(self._cpu)
+
+    def _test_mixed_magnitudes(self, device):
+        """
+        Each matrix in a batch must be conditioned on its own magnitude, so
+        matrices spanning many orders of magnitude can be batched together.
+        """
+        test_input = self.create_random_sym3x3(device, n=self.TEST_BATCH_SIZE)
+        scales = torch.logspace(-6, 6, self.TEST_BATCH_SIZE, device=device)[
+            :, None, None
+        ]
+        scaled_input = test_input * scales
+
+        eigenvalues, eigenvectors = symeig3x3(scaled_input, eigenvectors=True)
+        reconstruction = (
+            eigenvectors @ eigenvalues.diag_embed() @ eigenvectors.transpose(-2, -1)
+        )
+
+        self.assertClose(test_input, reconstruction / scales, atol=1e-04, rtol=1e-02)
+        self._test_eigenvectors_are_orthonormal(scaled_input)
+
     def test_eigenvectors_are_orthonormal_gpu(self):
         test_input = self.create_random_sym3x3(self._gpu, n=self.TEST_BATCH_SIZE)
 
@@ -192,21 +237,31 @@ class TestSymEig3x3(TestCaseMixin, unittest.TestCase):
     def test_degenerate_eigenvalues_cpu(self):
         self._test_degenerate_eigenvalues(self._cpu)
 
-    def _test_degenerate_eigenvalues(self, device):
+    def test_degenerate_eigenvalues_scaled_gpu(self):
+        for scale in (1e-6, 1e6):
+            self._test_degenerate_eigenvalues(self._gpu, scale=scale)
+
+    def test_degenerate_eigenvalues_scaled_cpu(self):
+        for scale in (1e-6, 1e6):
+            self._test_degenerate_eigenvalues(self._cpu, scale=scale)
+
+    def _test_degenerate_eigenvalues(self, device, scale: float = 1.0):
         """
-        Test degenerate eigenvalues like zero-valued and with 2-/3-multiplicity
+        Test degenerate eigenvalues like zero-valued and with 2-/3-multiplicity.
+        These are the cases held together by the regularizers inside the
+        decomposition, which only bite at the right input magnitude.
         """
         # Error tolerances for degenerate values are increased as things might become
         #  numerically unstable
-        deg_atol = 1e-3
+        deg_atol = 1e-3 * scale
         deg_rtol = 1.0
 
         # Construct random orthonormal sets
         test_eigenvecs = random_rotations(n=self.TEST_BATCH_SIZE, device=device)
 
         # Construct random eigenvalues
-        test_eigenvals = torch.randn(
-            (self.TEST_BATCH_SIZE, 3), device=test_eigenvecs.device
+        test_eigenvals = (
+            torch.randn((self.TEST_BATCH_SIZE, 3), device=test_eigenvecs.device) * scale
         )
         self._test_eigenvalues_and_eigenvectors(
             test_eigenvecs, test_eigenvals, atol=deg_atol, rtol=deg_rtol
