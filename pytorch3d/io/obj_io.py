@@ -834,24 +834,22 @@ def _save(
         return
 
     verts, faces = verts.cpu(), faces.cpu()
+    vert_rows = verts.detach().cpu().numpy()
 
-    lines = ""
+    lines = []
 
     if decimal_places is None:
         float_str = "%f"
     else:
         float_str = "%" + ".%df" % decimal_places
 
-    if len(verts):
-        V, D = verts.shape
-        for i in range(V):
-            vert = [float_str % verts[i, j] for j in range(D)]
-            lines += "v %s\n" % " ".join(vert)
+    for vert in vert_rows:
+        lines.append("v %s\n" % " ".join(float_str % v for v in vert))
 
     if save_normals:
         assert normals is not None
         assert faces_normals_idx is not None
-        lines += _write_normals(normals, faces_normals_idx, float_str)
+        lines.append(_write_normals(normals, float_str))
 
     if save_uvs:
         assert faces_uvs is not None
@@ -866,15 +864,13 @@ def _save(
             raise ValueError(message)
 
         verts_uvs, faces_uvs = verts_uvs.cpu(), faces_uvs.cpu()
+        uv_rows = verts_uvs.detach().cpu().numpy()
 
         # Save verts uvs after verts
-        if len(verts_uvs):
-            uV, uD = verts_uvs.shape
-            for i in range(uV):
-                uv = [float_str % verts_uvs[i, j] for j in range(uD)]
-                lines += "vt %s\n" % " ".join(uv)
+        for uv in uv_rows:
+            lines.append("vt %s\n" % " ".join(float_str % u for u in uv))
 
-    f.write(lines)
+    f.write("".join(lines))
 
     if torch.any(faces >= verts.shape[0]) or torch.any(faces < 0):
         warnings.warn("Faces have invalid indices")
@@ -888,26 +884,16 @@ def _save(
         )
 
 
-def _write_normals(
-    normals: torch.Tensor, faces_normals_idx: torch.Tensor, float_str: str
-) -> str:
-    if faces_normals_idx.dim() != 2 or faces_normals_idx.size(1) != 3:
-        message = (
-            "'faces_normals_idx' should either be empty or of shape (num_faces, 3)."
-        )
-        raise ValueError(message)
-
+def _write_normals(normals: torch.Tensor, float_str: str) -> str:
     if normals.dim() != 2 or normals.size(1) != 3:
         message = "'normals' should either be empty or of shape (num_verts, 3)."
         raise ValueError(message)
 
-    normals, faces_normals_idx = normals.cpu(), faces_normals_idx.cpu()
+    normal_rows = normals.detach().cpu().numpy()
 
     lines = []
-    V, D = normals.shape
-    for i in range(V):
-        normal = [float_str % normals[i, j] for j in range(D)]
-        lines.append("vn %s\n" % " ".join(normal))
+    for normal in normal_rows:
+        lines.append("vn %s\n" % " ".join(float_str % n for n in normal))
     return "".join(lines)
 
 
@@ -917,31 +903,37 @@ def _write_faces(
     faces_uvs: Optional[torch.Tensor],
     faces_normals_idx: Optional[torch.Tensor],
 ) -> None:
+    face_rows = faces.detach().cpu().numpy()
+    uv_rows = faces_uvs.detach().cpu().numpy() if faces_uvs is not None else None
+    normal_rows = (
+        faces_normals_idx.detach().cpu().numpy()
+        if faces_normals_idx is not None
+        else None
+    )
+
     F, P = faces.shape
     for i in range(F):
-        if faces_normals_idx is not None:
-            if faces_uvs is not None:
+        face_row = face_rows[i]
+        if normal_rows is not None:
+            normal_row = normal_rows[i]
+            if uv_rows is not None:
+                uv_row = uv_rows[i]
                 # Format faces as {verts_idx}/{verts_uvs_idx}/{verts_normals_idx}
                 face = [
-                    "%d/%d/%d"
-                    % (
-                        faces[i, j] + 1,
-                        faces_uvs[i, j] + 1,
-                        faces_normals_idx[i, j] + 1,
-                    )
+                    "%d/%d/%d" % (face_row[j] + 1, uv_row[j] + 1, normal_row[j] + 1)
                     for j in range(P)
                 ]
             else:
                 # Format faces as {verts_idx}//{verts_normals_idx}
                 face = [
-                    "%d//%d" % (faces[i, j] + 1, faces_normals_idx[i, j] + 1)
-                    for j in range(P)
+                    "%d//%d" % (face_row[j] + 1, normal_row[j] + 1) for j in range(P)
                 ]
-        elif faces_uvs is not None:
+        elif uv_rows is not None:
+            uv_row = uv_rows[i]
             # Format faces as {verts_idx}/{verts_uvs_idx}
-            face = ["%d/%d" % (faces[i, j] + 1, faces_uvs[i, j] + 1) for j in range(P)]
+            face = ["%d/%d" % (face_row[j] + 1, uv_row[j] + 1) for j in range(P)]
         else:
-            face = ["%d" % (faces[i, j] + 1) for j in range(P)]
+            face = ["%d" % (face_row[j] + 1) for j in range(P)]
 
         if i + 1 < F:
             f.write("f %s\n" % " ".join(face))
