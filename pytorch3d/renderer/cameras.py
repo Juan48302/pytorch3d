@@ -427,9 +427,11 @@ class CamerasBase(TensorProperties):
         if isinstance(index, tensor_types["bool"]):
             #  LongTensor]` has no attribute `ndim`.
             #  LongTensor]` has no attribute `shape`.
+            # pyrefly: ignore [missing-attribute]
             if index.ndim != 1 or index.shape[0] != len(self):
                 raise ValueError(
                     #  LongTensor]` has no attribute `shape`.
+                    # pyrefly: ignore [missing-attribute]
                     f"Boolean index of shape {index.shape} does not match cameras"
                 )
         elif max(index) >= len(self):
@@ -1790,11 +1792,13 @@ def get_ndc_to_screen_transform(
         image_size = torch.tensor(image_size, device=cameras.device)
     # pyrefly: ignore [missing-attribute]
     image_size = image_size.view(-1, 2)  # of shape (1 or B)x2
+    # pyrefly: ignore [missing-attribute]
     height, width = image_size.unbind(1)
 
     # For non square images, we scale the points such that smallest side
     # has range [-1, 1] and the largest side has range [-u, u], with u > 1.
     # This convention is consistent with the PyTorch3D renderer
+    # pyrefly: ignore [missing-attribute]
     scale = (image_size.min(dim=1).values - 0.0) / 2.0
 
     K[:, 0, 0] = scale

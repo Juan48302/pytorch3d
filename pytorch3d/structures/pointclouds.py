@@ -411,10 +411,13 @@ class Pointclouds:
                 index = index.squeeze(1) if index.numel() > 0 else index
                 # pyrefly: ignore [missing-attribute]
                 index = index.tolist()
+            # pyrefly: ignore [not-iterable]
             points = [self.points_list()[i] for i in index]
             if normals_list is not None:
+                # pyrefly: ignore [not-iterable]
                 normals = [normals_list[i] for i in index]
             if features_list is not None:
+                # pyrefly: ignore [not-iterable]
                 features = [features_list[i] for i in index]
         else:
             raise IndexError(index)

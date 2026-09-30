@@ -340,8 +340,11 @@ def corresponding_points_alignment(
     total_weight = torch.clamp(num_points, 1)
     # special handling for heterogeneous point clouds and/or input weights
     if weights is not None:
+        # pyrefly: ignore [bad-index]
         Xc *= weights[:, :, None]
+        # pyrefly: ignore [bad-index]
         Yc *= weights[:, :, None]
+        # pyrefly: ignore [missing-attribute]
         total_weight = torch.clamp(weights.sum(1), eps)
 
     if (num_points < (dim + 1)).any():

@@ -182,10 +182,12 @@ def generate_eval_video_cameras(
         )
 
     test_cameras = PerspectiveCameras(
+        # pyrefly: ignore [bad-argument-type]
         focal_length=focal_length,
         principal_point=principal_point,
         R=R,
         T=T,
+        # pyrefly: ignore [missing-attribute]
         device=focal_length.device,
     )
 

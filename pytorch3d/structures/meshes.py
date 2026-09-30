@@ -510,7 +510,9 @@ class Meshes:
                 index = index.squeeze(1) if index.numel() > 0 else index
                 # pyrefly: ignore [missing-attribute]
                 index = index.tolist()
+            # pyrefly: ignore [not-iterable]
             verts = [self.verts_list()[i] for i in index]
+            # pyrefly: ignore [not-iterable]
             faces = [self.faces_list()[i] for i in index]
         else:
             raise IndexError(index)
